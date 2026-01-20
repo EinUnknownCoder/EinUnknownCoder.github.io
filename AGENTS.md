@@ -1,145 +1,137 @@
 # AGENTS.md
 
-This file provides comprehensive guidelines for agentic coding agents (AI) operating within this repository.
-It defines the buildless environment, manual testing protocols, and strict code style conventions to ensure consistency.
+This file defines the strict protocols, code style, and operational workflow for AI agents and developers working in this repository.
+The project is a buildless, static website (HTML/CSS/JS) requiring manual verification and strict adherence to conventions.
 
 ## 1. Environment & Architecture
 
-**Project Type**: Static Website (Photo Gallery).
-**Stack**: HTML5, CSS3, Vanilla JavaScript (ES6+).
-**Dependencies**: Zero-dependency architecture (no npm/bundlers). External assets (Fonts/Icons) via CDN are permitted.
+-   **Type**: Static Website (Photo Gallery).
+-   **Stack**: HTML5, CSS3, Vanilla JavaScript (ES6+).
+-   **Language**: German (`lang="de"`). User-facing text must be in German.
+-   **Dependencies**: ZERO. No `npm`, `node_modules`, or bundlers.
+-   **Asset Strategy**:
+    -   Local images in `/images`.
+    -   Fonts/Icons via standard CDNs (Google Fonts) are allowed.
+    -   No external JS libraries (jQuery, Bootstrap, etc.) unless explicitly requested.
 
-### Key Constraints
--   **No Build Tools**: Do not introduce Webpack, Parcel, Vite, or similar bundlers.
--   **No Frameworks**: Do not introduce React, Vue, jQuery, or Bootstrap.
--   **Direct Execution**: The project is designed to run directly in a browser or via a simple static file server.
+### System Constraints
+-   **No Node.js/NPM**: The environment may not have `node` or `npm`. Do not rely on `npx` commands.
+-   **No Build Step**: Code must run directly in the browser. Use native ES modules if needed, but currently `main.js` is a standard script.
 
 ## 2. Operational Commands
 
-Since there is no `package.json`, standard `npm` scripts are unavailable. Use `npx` for tooling or perform tasks manually.
-
 ### Serving the Application
-To preview changes, serve the root directory using a static server.
+Since `npm` is unavailable, use Python to serve the static files for verification.
+
 ```bash
-# Recommended: Use live-server via npx
-npx live-server --port=8080 --entry-file=index.html
+# Start a local server on port 8080
+python3 -m http.server 8080 &
 ```
 
 ### Formatting & Linting
-Maintain code quality using standard tools via `npx`.
-```bash
-# Format Code (Prettier)
-npx prettier --write "**/*.{html,css,js}" --tab-width 4 --single-quote
+**Automated formatters are not available.** You must manually adhere to the code style.
+-   **Do not** reformat entire files. Only format the lines you change.
+-   **Do not** change indentation style (spaces vs tabs) of existing files.
 
-# Lint JavaScript (ESLint)
-# Note: Requires a config file. If none exists, rely on manual review or standard rules.
-npx eslint "js/**/*.js"
-```
+### Testing Strategy (Manual Only)
+There are no automated tests. You must manually verify changes using the **Single Test Protocol**.
 
-### Testing Strategy
-**Status**: No automated testing framework exists.
-**Requirement**: You must perform **Manual Verification** for every change.
+#### The "Single Test" Protocol
+For every change, perform these 3 specific checks:
 
-#### Manual Test Protocol (Required)
-Perform these checks before marking a task as complete:
-1.  **Console Check**:
-    -   Open Developer Tools (F12).
-    -   Reload the page.
-    -   Verify **zero** console errors or warnings.
-2.  **Layout Responsiveness**:
-    -   View at **Desktop** (>1024px): Grid should show multiple columns.
-    -   View at **Mobile** (<480px): Grid should collapse to 1 or 2 columns.
-3.  **Core Functionality (Lightbox)**:
-    -   **Open**: Click any `.gallery-item` image. Verify `#lightbox` appears with the correct high-res image.
-    -   **Close (Button)**: Click the `×` button. Verify `#lightbox` disappears.
-    -   **Close (Background)**: Click the dark background (overlay). Verify `#lightbox` disappears.
-    -   **Navigation**: (If implemented) Verify next/prev buttons work without errors.
+1.  **Console Health**:
+    -   Open DevTools. Reload. Ensure **0 console errors**.
+2.  **Visual Layout**:
+    -   **Desktop**: Grid layout (3+ columns).
+    -   **Mobile**: Single column layout.
+    -   Verify no horizontal scrollbars appear unintentionally.
+3.  **Feature Logic**:
+    -   **Lightbox**: Click an image. Verify it opens. Click 'X'. Verify it closes.
+    -   **Images**: Ensure all placeholders load.
+    -   **Responsiveness**: Resize window to ensure elements flow correctly.
 
 ## 3. Code Style Guidelines
 
-Adhere strictly to these conventions to match existing code.
+You must match the existing codebase exactly.
 
 ### JavaScript (`js/main.js`)
--   **Indentation**: **4 spaces**.
--   **Quotes**: Single quotes `'` preferred.
--   **Semicolons**: **Yes**, use semicolons at the end of statements.
--   **Variables**: Use `const` for immutables, `let` for mutables. Avoid `var`.
--   **Functions**: Use Arrow functions `() => {}` for callbacks.
--   **DOM Access**:
-    -   Cache elements at the top of `DOMContentLoaded`.
-    -   Use `document.querySelector` / `querySelectorAll` for complex selectors.
-    -   Use `document.getElementById` for ID selectors.
--   **Event Listeners**:
-    -   Wrap all logic in `document.addEventListener('DOMContentLoaded', ...)` to ensure DOM readiness.
-    -   Clean up listeners if elements are removed (though rare in this static app).
+-   **Indentation**: 4 spaces.
+-   **Quotes**: Single quotes (`'`) preferred.
+-   **Semicolons**: **ALWAYS** use semicolons.
+-   **Variables**: `const` by default, `let` if reassignment is needed. No `var`.
+-   **DOM**:
+    -   Cache selectors at the top of the scope/function.
+    -   Use `document.getElementById` for IDs, `querySelector` for classes.
+    -   Always wrap execution in `DOMContentLoaded`.
+-   **Functions**: Arrow functions `() => {}` for callbacks/anonymous functions.
 
 ### CSS (`css/style.css`)
--   **Indentation**: **4 spaces**.
--   **Selectors**:
-    -   Use BEM-like naming for components (e.g., `.gallery`, `.gallery-item`).
-    -   Use IDs (`#lightbox`) sparingly, mainly for unique global states or overlays.
--   **Units**:
-    -   `rem`: Padding, margins, font-sizes.
-    -   `px`: Borders, minimal widths.
-    -   `%`: Layout widths where Grid/Flex isn't used.
--   **Layout**: Prefer CSS Grid and Flexbox over floats.
+-   **Indentation**: 4 spaces.
+-   **Syntax**: Standard CSS (no SCSS/Sass).
+-   **Naming**: BEM-ish (e.g., `.gallery`, `.gallery-item`).
+-   **Units**: `rem` for spacing/font-size, `%`/`fr` for layout, `px` for borders.
+-   **Variables**: Use `:root` variables for colors and spacing.
 
 ### HTML (`index.html`)
--   **Indentation**: **4 spaces**.
--   **Semantics**: Use `<header>`, `<main>`, `<footer>`, `<section>`.
--   **Accessibility (A11y)**:
-    -   **Images**: Must have descriptive `alt` attributes.
-    -   **Interactive Elements**: Buttons/Links must have focus states and aria-labels if icon-only.
--   **Lazy Loading**: Use `data-src` for high-resolution images intended for the lightbox, keeping initial load light.
+-   **Indentation**: 4 spaces.
+-   **Structure**: Semantic tags (`<header>`, `<main>`, `<footer>`, `<section>`).
+-   **Accessibility**:
+    -   All `<img>` tags MUST have a descriptive `alt`.
+    -   Interactive elements need `aria-label` if text is not visible.
 
-## 4. Development Workflow for Agents
+## 4. Agent Workflow
 
-1.  **Analysis**:
-    -   Read `index.html`, `css/style.css`, and `js/main.js` to establish context.
-    -   Identify if the change requires modifying structure (HTML), style (CSS), or logic (JS).
-2.  **Implementation**:
-    -   Make atomic changes.
-    -   Ensure new CSS classes follow the existing naming convention.
-    -   Ensure new JS functions document their purpose if complex.
-3.  **Verification**:
-    -   Run the **Manual Test Protocol**.
-    -   If a bug is found, fix it *before* reporting completion.
-    -   Do not break existing functionality (Regression Testing).
+1.  **Analyze**:
+    -   Read `AGENTS.md` (this file).
+    -   Read `index.html` and relevant JS/CSS files to build a mental model.
+    -   Check for existing patterns (e.g., how the Lightbox is toggled) before writing new code.
 
-## 5. Tooling Rules
+2.  **Plan**:
+    -   Determine if the request requires Structure (HTML), Style (CSS), or Logic (JS).
+    -   Propose a plan that uses *only* vanilla technologies.
 
--   **Copilot / AI Assistants**:
-    -   Context Awareness: Always read the referenced CSS file when generating JS that manipulates classes.
-    -   Simplicity: Reject suggestions that import libraries (e.g., `import { modal } from 'bootstrap'`). Rewrite logic in vanilla JS.
--   **Cursor Rules**:
-    -   If `.cursor/rules` exists, those rules take precedence.
-    -   Otherwise, default to: "Write clean, readable, zero-dependency code."
+3.  **Implement**:
+    -   Write code using `edit` or `write`.
+    -   **CRITICAL**: Use absolute paths (e.g., `/home/user/repo/css/style.css`).
+    -   **CRITICAL**: Maintain 4-space indentation.
 
-## 6. Directory Structure
+4.  **Verify**:
+    -   Start the python server if not running.
+    -   Review your changes. If you added a class, did you add the CSS?
+    -   If you added an ID, is it unique?
+
+## 5. Directory Structure
 
 ```text
 /
 ├── css/
 │   └── style.css       # Global styles
 ├── js/
-│   └── main.js         # Main application logic
-├── images/             # Static assets
-├── index.html          # Entry point
-├── AGENTS.md           # This file
-└── README.md           # General project info
+│   └── main.js         # Application logic
+├── images/             # Local image assets
+├── index.html          # Main entry point
+└── AGENTS.md           # This file
 ```
 
-When creating new files, place them in the appropriate subdirectory. Do not clutter the root.
+## 6. Error Handling & Edge Cases
 
-## 7. Error Handling & Edge Cases
+-   **Defensive DOM**:
+    -   Always check if an element exists before adding listeners.
+    -   `const btn = document.getElementById('btn'); if(btn) { ... }`
+-   **Image Loading**:
+    -   Assume images might fail. The CSS should handle layout gracefully if an image is missing (e.g., background colors).
 
--   **Missing Elements**:
-    -   Example: `const btn = document.querySelector('.btn'); if (btn) { ... }`
-    -   Always check if an element exists before attaching listeners to avoid runtime errors on pages where the element is absent.
--   **Network Errors**:
-    -   For image loading, consider adding `onerror` handlers to show placeholders if an image fails to load.
+## 7. Version Control
 
-## 8. Commit & Version Control
+-   **Commit Messages**: Conventional Commits (e.g., `feat: add footer links`, `fix: mobile padding`).
+-   **Scope**: Atomic commits. One feature/fix per commit.
+-   **No Reverts**: Unless critical. Fix forward.
 
--   **Messages**: Use conventional commits (e.g., `feat: add swipe support`, `fix: lightbox close issue`).
--   **Scope**: Keep commits small and focused on a single logical change.
+## 8. Specific Rules (Copilot/Cursor)
+
+-   **Cursor**: No specific `.cursorrules` exist, so follow this file implicitly.
+-   **Copilot**: No `.github/copilot-instructions.md` exist.
+-   **General AI Rule**: Do not suggest "modern" build stacks (React/Vite) for this project. Keep it simple and native.
+
+---
+*Last Updated: 2026-01-20*
