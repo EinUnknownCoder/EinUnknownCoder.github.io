@@ -1,113 +1,145 @@
 # AGENTS.md
 
-This file provides guidelines for agentic coding agents working in this repository.
+This file provides comprehensive guidelines for agentic coding agents (AI) operating within this repository.
+It defines the buildless environment, manual testing protocols, and strict code style conventions to ensure consistency.
 
-## Project Overview
+## 1. Environment & Architecture
 
-This is a simple, static photo gallery website. It uses plain HTML, CSS, and JavaScript, with no build tools or frameworks. The goal is to keep the codebase clean, simple, and maintainable.
+**Project Type**: Static Website (Photo Gallery).
+**Stack**: HTML5, CSS3, Vanilla JavaScript (ES6+).
+**Dependencies**: None. Zero-dependency runtime.
 
-## Build, Lint, and Test Commands
+### Key Constraints
+-   **No Build Tools**: Do not introduce Webpack, Parcel, Vite, or similar bundlers.
+-   **No Frameworks**: Do not introduce React, Vue, jQuery, or Bootstrap.
+-   **Direct Execution**: The project is designed to run directly in a browser or via a simple static file server.
 
-There is no formal build process for this project. However, here are some recommended commands for local development, linting, and formatting.
+## 2. Operational Commands
 
-### Local Development
+Since there is no `package.json`, standard `npm` scripts are unavailable. Use `npx` for tooling or perform tasks manually.
 
-To serve the website locally and see changes live, you can use a simple HTTP server. If you have Node.js installed, you can use the `live-server` package:
-
+### Serving the Application
+To preview changes, serve the root directory using a static server.
 ```bash
-# Install live-server globally (if you haven't already)
-npm install -g live-server
-
-# Serve the website
-live-server
+# Recommended: Use live-server via npx
+npx live-server --port=8080 --entry-file=index.html
 ```
 
-### Formatting and Linting
-
-To maintain consistent code style, we recommend using Prettier for formatting and ESLint for identifying potential issues in JavaScript.
-
-First, you would need to set up a `package.json` and install these dependencies:
-
+### Formatting & Linting
+Maintain code quality using standard tools via `npx`.
 ```bash
-npm init -y
-npm install --save-dev prettier eslint
+# Format Code (Prettier)
+npx prettier --write "**/*.{html,css,js}" --tab-width 4 --single-quote
+
+# Lint JavaScript (ESLint)
+# Note: Requires a config file. If none exists, rely on manual review or standard rules.
+npx eslint "js/**/*.js"
 ```
 
-**Formatting (Prettier)**
+### Testing Strategy
+**Status**: No automated testing framework exists.
+**Requirement**: You must perform **Manual Verification** for every change.
 
-Create a `.prettierrc` file with your desired configuration, for example:
+#### Manual Test Protocol (Required)
+Perform these checks before marking a task as complete:
+1.  **Console Check**:
+    -   Open Developer Tools (F12).
+    -   Reload the page.
+    -   Verify **zero** console errors or warnings.
+2.  **Layout Responsiveness**:
+    -   View at **Desktop** (>1024px): Grid should show multiple columns.
+    -   View at **Mobile** (<480px): Grid should collapse to 1 or 2 columns.
+3.  **Core Functionality (Lightbox)**:
+    -   **Open**: Click any `.gallery-item` image. Verify `#lightbox` appears with the correct high-res image.
+    -   **Close (Button)**: Click the `×` button. Verify `#lightbox` disappears.
+    -   **Close (Background)**: Click the dark background (overlay). Verify `#lightbox` disappears.
+    -   **Navigation**: (If implemented) Verify next/prev buttons work without errors.
 
-```json
-{
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2
-}
+## 3. Code Style Guidelines
+
+Adhere strictly to these conventions to match existing code.
+
+### JavaScript (`js/main.js`)
+-   **Indentation**: **4 spaces**.
+-   **Quotes**: Single quotes `'` preferred.
+-   **Semicolons**: **Yes**, use semicolons at the end of statements.
+-   **Variables**: Use `const` for immutables, `let` for mutables. Avoid `var`.
+-   **Functions**: Use Arrow functions `() => {}` for callbacks.
+-   **DOM Access**:
+    -   Cache elements at the top of `DOMContentLoaded`.
+    -   Use `document.querySelector` / `querySelectorAll` for complex selectors.
+    -   Use `document.getElementById` for ID selectors.
+-   **Event Listeners**:
+    -   Wrap all logic in `document.addEventListener('DOMContentLoaded', ...)` to ensure DOM readiness.
+    -   Clean up listeners if elements are removed (though rare in this static app).
+
+### CSS (`css/style.css`)
+-   **Indentation**: **4 spaces**.
+-   **Selectors**:
+    -   Use BEM-like naming for components (e.g., `.gallery`, `.gallery-item`).
+    -   Use IDs (`#lightbox`) sparingly, mainly for unique global states or overlays.
+-   **Units**:
+    -   `rem`: Padding, margins, font-sizes.
+    -   `px`: Borders, minimal widths.
+    -   `%`: Layout widths where Grid/Flex isn't used.
+-   **Layout**: Prefer CSS Grid and Flexbox over floats.
+
+### HTML (`index.html`)
+-   **Indentation**: **4 spaces**.
+-   **Semantics**: Use `<header>`, `<main>`, `<footer>`, `<section>`.
+-   **Accessibility (A11y)**:
+    -   **Images**: Must have descriptive `alt` attributes.
+    -   **Interactive Elements**: Buttons/Links must have focus states and aria-labels if icon-only.
+-   **Lazy Loading**: Use `data-src` for high-resolution images intended for the lightbox, keeping initial load light.
+
+## 4. Development Workflow for Agents
+
+1.  **Analysis**:
+    -   Read `index.html`, `css/style.css`, and `js/main.js` to establish context.
+    -   Identify if the change requires modifying structure (HTML), style (CSS), or logic (JS).
+2.  **Implementation**:
+    -   Make atomic changes.
+    -   Ensure new CSS classes follow the existing naming convention.
+    -   Ensure new JS functions document their purpose if complex.
+3.  **Verification**:
+    -   Run the **Manual Test Protocol**.
+    -   If a bug is found, fix it *before* reporting completion.
+    -   Do not break existing functionality (Regression Testing).
+
+## 5. Tooling Rules
+
+-   **Copilot / AI Assistants**:
+    -   Context Awareness: Always read the referenced CSS file when generating JS that manipulates classes.
+    -   Simplicity: Reject suggestions that import libraries (e.g., `import { modal } from 'bootstrap'`). Rewrite logic in vanilla JS.
+-   **Cursor Rules**:
+    -   If `.cursor/rules` exists, those rules take precedence.
+    -   Otherwise, default to: "Write clean, readable, zero-dependency code."
+
+## 6. Directory Structure
+
+```text
+/
+├── css/
+│   └── style.css       # Global styles
+├── js/
+│   └── main.js         # Main application logic
+├── images/             # Static assets
+├── index.html          # Entry point
+├── AGENTS.md           # This file
+└── README.md           # General project info
 ```
 
-Then, you can format the code using the following command:
+When creating new files, place them in the appropriate subdirectory. Do not clutter the root.
 
-```bash
-# Format all HTML, CSS, and JavaScript files
-prettier --write "**/*.{html,css,js}"
-```
+## 7. Error Handling & Edge Cases
 
-**Linting (ESLint)**
+-   **Missing Elements**:
+    -   Example: `const btn = document.querySelector('.btn'); if (btn) { ... }`
+    -   Always check if an element exists before attaching listeners to avoid runtime errors on pages where the element is absent.
+-   **Network Errors**:
+    -   For image loading, consider adding `onerror` handlers to show placeholders if an image fails to load.
 
-Set up an ESLint configuration file (`.eslintrc.json`):
+## 8. Commit & Version Control
 
-```json
-{
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  }
-}
-```
-
-Then, lint the JavaScript files:
-
-```bash
-eslint "**/*.js"
-```
-
-### Testing
-
-There are currently no automated tests for this project. Given its simplicity, manual testing is sufficient. When making changes, please test the following:
-
--   The gallery layout is responsive and displays correctly on different screen sizes.
--   Clicking on a thumbnail opens the lightbox.
--   The close button and clicking outside the image in the lightbox closes it.
-
-## Code Style Guidelines
-
-### General
-
--   **File Naming**: Use lowercase and kebab-case for file names (e.g., `contact-form.html`).
--   **Indentation**: Use 2 spaces for indentation.
--   **Comments**: Use comments to explain the *why*, not the *what*. Keep comments concise and up-to-date.
-
-### HTML
-
--   **Semantics**: Use semantic HTML5 elements (`<header>`, `<main>`, `<footer>`, etc.) to structure the page.
--   **Accessibility**: Ensure all images have a descriptive `alt` attribute.
--   **Clarity**: Write clean and readable HTML. Avoid unnecessary `div`s.
-
-### CSS
-
--   **Naming Convention**: The project uses a BEM-like naming convention for classes (e.g., `.gallery-item`, `.lightbox-content`). Please follow this convention.
--   **Organization**: Group related CSS rules together. Start with global styles, then layout, then components.
--   **Units**: Use `rem` for font sizes and `px` for borders. Use `rem` or `%` for layout dimensions where appropriate.
-
-### JavaScript
-
--   **Modern JavaScript**: Use modern ES6+ features like `const`, `let`, arrow functions, and template literals.
--   **Strict Mode**: While not explicitly used, writing code that is compliant with strict mode is encouraged.
--   **DOM Manipulation**: Keep DOM manipulation clean and efficient. Cache DOM elements in variables if they are accessed multiple times.
--   **Error Handling**: Although the current JavaScript is simple, for any new functionality, add basic error handling where appropriate (e.g., checking if an element exists before trying to add an event listener to it).
--   **No jQuery**: This project uses plain JavaScript. Do not introduce jQuery or other large libraries.
+-   **Messages**: Use conventional commits (e.g., `feat: add swipe support`, `fix: lightbox close issue`).
+-   **Scope**: Keep commits small and focused on a single logical change.
