@@ -6,18 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     galleryItems.forEach(item => {
         item.addEventListener('click', () => {
-            lightbox.style.display = 'block';
+            lightbox.classList.add('active');
             lightboxImg.src = item.querySelector('img').dataset.src;
         });
     });
 
-    closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-    });
+    const closeLightbox = () => {
+        lightbox.classList.remove('active');
+    };
+
+    closeBtn.addEventListener('click', closeLightbox);
 
     lightbox.addEventListener('click', (e) => {
         if (e.target !== lightboxImg) {
-            lightbox.style.display = 'none';
+            closeLightbox();
         }
     });
 });
