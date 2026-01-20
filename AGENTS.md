@@ -7,7 +7,7 @@ It defines the buildless environment, manual testing protocols, and strict code 
 
 **Project Type**: Static Website (Photo Gallery).
 **Stack**: HTML5, CSS3, Vanilla JavaScript (ES6+).
-**Dependencies**: None. Zero-dependency runtime.
+**Dependencies**: Zero-dependency architecture (no npm/bundlers). External assets (Fonts/Icons) via CDN are permitted.
 
 ### Key Constraints
 -   **No Build Tools**: Do not introduce Webpack, Parcel, Vite, or similar bundlers.
